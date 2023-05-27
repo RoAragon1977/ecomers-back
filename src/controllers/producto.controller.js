@@ -1,4 +1,4 @@
-import ProductoDb from '../models/producto';
+import Productoschema from '../models/producto';
 
 const maxElements = 4;
 //Segmento la responsabilidad de conexion a la base de datos de mi index
@@ -7,7 +7,7 @@ const maxElements = 4;
 async function GetAllProductos(req, res) {
   const {page} = req.query
   try {
-    const productos = await ProductoDb.find()
+    const productos = await Productoschema.find()
       .skip(maxElements * (page - 1))
       .limit(maxElements);
     return res.status(200).json({
@@ -33,7 +33,7 @@ async function AddProductos(req, res) {
         mensaje: 'Todos los campos deben estar llenos',
       });
     }
-    const AddedProducto = await ProductoDb.create(req.body);
+    const AddedProducto = await Productoschema.create(req.body);
     return res.status(201).json({
       ok: true,
       added_producto: AddedProducto,
@@ -51,7 +51,7 @@ async function AddProductos(req, res) {
 async function UpdateProducto(req, res) {
   const { id } = req.params;
   try {
-    const updatedProducto = await ProductoDb.findByIdAndUpdate(id, req.body);
+    const updatedProducto = await Productoschema.findByIdAndUpdate(id, req.body);
     return res.status(201).json({
       ok: true,
       update_producto: updatedProducto,
@@ -68,7 +68,7 @@ async function UpdateProducto(req, res) {
 async function DeleteProducto(req, res) {
   try {
     const { id } = req.params;
-    const deletedProducto = await ProductoDb.findByIdAndDelete(id);
+    const deletedProducto = await Productoschema.findByIdAndDelete(id);
     return res.status(201).json({
       ok: true,
       deleted_producto: deletedProducto,

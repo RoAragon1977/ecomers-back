@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
-import producto from "./producto";
 
 const userScheme = new Schema({
   email: String,
@@ -18,6 +17,12 @@ const userScheme = new Schema({
     default: false,
     type: Boolean,
   },
+  favoritos: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'accesorios',
+    }
+  ],
 });
 
 userScheme.methods.generateAccesToken = function () {

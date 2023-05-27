@@ -1,6 +1,6 @@
 import { Encrypt, Compare } from "../helpers/password.helper";
-import producto from "../models/producto";
-import UserScheme from "../models/user"
+import productoSchema from "../models/producto";
+import userScheme from "../models/user"
 
 const Login_Error_Message = "El usuario o la contraseña no coincide"
 const base_error_objet = {
@@ -14,10 +14,11 @@ async function AddUser(req, res) {
 
     const passwordHash = await Encrypt(password);
     console.log(passwordHash);
-    const newUser = await UserScheme.create({
+    const newUser = await userScheme.create({
       email,
       photoUrl,
       passwordHash,
+      favoritos: [],
     });
 
     return res.json({
@@ -36,7 +37,7 @@ async function AddUser(req, res) {
 async function Login(req, res) {
   try {
     const { email, password } = req.body;
-    const userLogged = await UserScheme.findOne({ email }).populate();
+    const userLogged = await userScheme.findOne({ email }).populate();
 
     if (!userLogged) return res.status(400).json(base_error_objet);
 
@@ -57,6 +58,29 @@ async function Login(req, res) {
       message: err,
     });
   }
-}  
+};
 
-export { AddUser, Login };
+async function AddFavoriteProduct(req, res) {
+  try {
+    const { userId, productId } = req.params;
+
+    const user = await productoSchema.findByIdAndUpdate(
+      userId,
+      { $addToSet: { favoritos: productId } },
+      { new: true }
+    );
+
+    return res.json({
+      ok: true,
+      data_updated: user,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      ok: false,
+      message: err,
+    });
+  };
+};
+
+export { AddUser, Login, AddFavoriteProduct };
