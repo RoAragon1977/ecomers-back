@@ -62,25 +62,41 @@ async function Login(req, res) {
 
 async function AddFavoriteProduct(req, res) {
   try {
-    const { userId, productId } = req.params;
+    const { userId, productId } = req.body;
 
-    const user = await productoSchema.findByIdAndUpdate(
-      userId,
-      { $addToSet: { favoritos: productId } },
-      { new: true }
-    );
+// Verifica si el usuario existe    
+    const user = await userScheme.findById(userId);
+    if (!user) {
+      return res.status(400).json({
+        ok: false,
+        error_msg: 'Usuario no encontrado'
+      });
+    }
 
-    return res.json({
-      ok: true,
-      data_updated: user,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
+// Verificar si el producto existe  
+  const producto = await productoSchema.findById(productId);
+  if (!producto) {
+    return res.status(404).json({
       ok: false,
-      message: err,
+      error_msg: 'Producto no encontrado'
     });
-  };
+  }
+
+// Agregar el producto a la lista de favoritos del usuario
+  user.favoritos.push(producto);
+  await user.save();
+
+  return res.status(200).json({
+    ok: true,
+    message: 'Producto agregado a favoritos'
+  });
+  }catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      error: error,
+    });
+  }
 };
 
 export { AddUser, Login, AddFavoriteProduct };

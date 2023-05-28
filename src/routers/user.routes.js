@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post("/user/add", AddUser);
 router.get("/user/login", Login);
-router.post("/users/:usuarioId/favorites/:productoId", AddFavoriteProduct);
+router.post("/user/favorites", AddFavoriteProduct);
 
 export default router;
