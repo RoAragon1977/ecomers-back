@@ -5,7 +5,7 @@ import { Authenticate } from "../helpers/token.helpers";
 const router = express.Router();
 
   //traernos todos los productos almacenados en la base de datos
-router.get('/accesorio', Authenticate, GetAllProductos);
+router.get('/accesorio', GetAllProductos);
 
   //creamos un producto nuevo
 router.post('/accesorio', Authenticate, AddProductos)
@@ -14,6 +14,6 @@ router.post('/accesorio', Authenticate, AddProductos)
 router.put('/accesorio/:id', Authenticate, UpdateProducto);
 
   //borrar una tarea or id
-router.delete('/accesorio/:id', DeleteProducto);
+router.delete('/accesorio/:id',Authenticate, DeleteProducto);
 
 export default router

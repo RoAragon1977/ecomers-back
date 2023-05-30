@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 const saltRounds = 10;
 
 async function Encrypt(password) {
-    return await bcrypt.hash(password, saltRounds); 
+    return await bcrypt.hash(password, process.env.SALT || 10); 
 };
 
 async function Compare(password, hash) {

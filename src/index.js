@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from  'morgan';
+import dotenv from 'dotenv';
 import cors from 'cors'
 
 import connect from './db/db';
@@ -10,8 +11,11 @@ const app = express();
 app.use(morgan('start'));
 app.use(express.json())
 app.use(cors());
+dotenv.config();
 
-app.listen(5000, () => {
+connect();
+
+app.listen(process.env.PORT || 5000, () => {
   console.log('Escuchando el puero 5000');
 });
 
@@ -19,5 +23,3 @@ app.listen(5000, () => {
 
 app.use('/api', productoRoutes);
 app.use('/api', userRouter);
-
-connect();
