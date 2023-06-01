@@ -1,6 +1,7 @@
 import { Encrypt, Compare } from "../helpers/password.helper";
 import productoSchema from "../models/producto";
-import userScheme from "../models/user"
+import userScheme from "../models/user";
+import jwt from "jsonwebtoken"
 
 const Login_Error_Message = "El usuario o la contraseña no coincide"
 const base_error_objet = {
@@ -60,30 +61,32 @@ async function Login(req, res) {
   }
 };
 
+// Agrega un producto a la lista de favoritos de cada usuario
 async function AddFavoriteProduct(req, res) {
   try {
     const { userId, productId } = req.body;
 
 // Verifica si el usuario existe    
     const user = await userScheme.findById(userId);
-    if (!user) {
-      return res.status(400).json({
+    const Product = await productoSchema.findById(productId);
+
+// Verificar si el usuario o el producto existe  
+    if (!user || !Product) {
+      return res.status(404).json({
         ok: false,
-        error_msg: 'Usuario no encontrado'
+        error_msg: 'Usuario o producto no encontrado',
       });
     }
 
-// Verificar si el producto existe  
-  const producto = await productoSchema.findById(productId);
-  if (!producto) {
-    return res.status(404).json({
-      ok: false,
-      error_msg: 'Producto no encontrado'
-    });
-  }
-
+// Verifica si el producto ya esta en la lista de favorito
+    if (user.favoritos.includes(productId)) {
+      return res.status(400).json({
+        ok: false,
+        error_msg: 'El producto ya está en la lista de favoritos',
+      });
+    }
 // Agregar el producto a la lista de favoritos del usuario
-  user.favoritos.push(producto);
+  user.favoritos.push(Product);
   await user.save();
 
   return res.status(200).json({
@@ -91,12 +94,35 @@ async function AddFavoriteProduct(req, res) {
     message: 'Producto agregado a favoritos'
   });
   }catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Error al agregar el producto a favoritos',
+      error: error.message,
+    });
+  }
+};
+
+// Muestra la lista de productos favoritos por usuario
+async function GetFavoriteProduct(req, res) {
+  try {
+    const { userId } = req.params;
+
+    const user = await userScheme.findById(userId).populate('favoritos');
+
+//Verifico si existe el usuario
+    if (!user) {
+      return res.status(404).json({
+        ok: true,
+        favorite_producs: user.favoritos,
+      });
+    }
+
+  } catch (error) {
     return res.status(500).json({
       ok: false,
       error: error,
     });
   }
-};
+}
 
-export { AddUser, Login, AddFavoriteProduct };
+export { AddUser, Login, AddFavoriteProduct, GetFavoriteProduct };

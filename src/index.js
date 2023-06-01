@@ -15,8 +15,8 @@ dotenv.config();
 
 connect();
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log('Escuchando el puero 5000');
+app.listen(process.env.PORT || 1000, () => {
+  console.log('Escuchando el puero 1000');
 });
 
 
