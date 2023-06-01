@@ -17,6 +17,10 @@ const userScheme = new Schema({
     default: false,
     type: Boolean,
   },
+  administrador: {
+    default: false,
+    type: Boolean,
+  },
   favoritos: [
     {
       type: mongoose.Schema.Types.ObjectId,

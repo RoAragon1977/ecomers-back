@@ -1,7 +1,6 @@
 import { Encrypt, Compare } from "../helpers/password.helper";
 import productoSchema from "../models/producto";
 import userScheme from "../models/user";
-import jwt from "jsonwebtoken"
 
 const Login_Error_Message = "El usuario o la contraseña no coincide"
 const base_error_objet = {
@@ -112,10 +111,15 @@ async function GetFavoriteProduct(req, res) {
 //Verifico si existe el usuario
     if (!user) {
       return res.status(404).json({
-        ok: true,
+        ok: false,
         favorite_producs: user.favoritos,
       });
-    }
+    } 
+    return res.status(200).json({
+      ok: true,
+      favorite_producs: user.favoritos,
+    })
+    
 
   } catch (error) {
     return res.status(500).json({
